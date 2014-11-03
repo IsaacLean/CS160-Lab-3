@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec3 vPosition;
+            attribute vec3 vColor;
+
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+
+            varying vec4 color;
+
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+                color = vec4(vColor, 1.0);
+            }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision mediump float;
+
+            varying vec4 color;
+
+            void main() {
+                gl_FragColor = color;
+            }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+		<script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="lab3.js"></script>
+    </head>
+    <body>
+        <br>
+        Subdivisions: <strong>1</strong> <input id="subSlider" type="range" min="1" max="6" step="1" value="1"> <strong>6</strong>
+        <br><br>
+        <button id= "xButton">Rotate X</button>
+        <button id= "yButton">Rotate Y</button>
+        <button id= "zButton">Rotate Z</button>
+        <br>
+        <button id= "fovMinusButton">FOV-</button>
+        <button id= "fovPlusButton">FOV+</button>
+        <br>
+        <button id= "eyeXMinusButton">eyeX-</button>
+        <button id= "eyeXPlusButton">eyeX+</button>
+        <button id= "eyeYMinusButton">eyeY-</button>
+        <button id= "eyeYPlusButton">eyeY+</button>
+        <button id= "eyeZMinusButton">eyeZ-</button>
+        <button id= "eyeZPlusButton">eyeZ+</button>
+        <br><br>
+        <strong>Instructions:</strong>
+        <br>
+        - Use the slider to adjust the number of gasket subdivisions.<br>
+        - Use the buttons above to rotate the gasket.<br>
+        - Use 'w' or 's' to translate the gasket forward or back respectively.<br>
+        - Use 'a' or 'd' to translate the gasket left or right respectively.
+        <br><br>
+        <canvas id="gl-canvas" width="700" height="700">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    </body>
+</html>
