@@ -145,9 +145,9 @@ window.onload = function init() {
                     }
 
                     if(prevY < event.pageY) {
-                        eyeY += 0.1;
+                        eyeY += 0.3;
                     } else if(prevY> event.pageY) {
-                        eyeY -= 0.1;
+                        eyeY -= 0.3;
                     }
                 }
             }
