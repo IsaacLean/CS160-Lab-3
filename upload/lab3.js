@@ -26,12 +26,6 @@ var scaleFactor = 0.5;
 
 var view = mat4(1.0);
 
-const at = vec3(0, 0, 0);
-const up = vec3(0, 1, 0);
-var theta2 = 0;
-var phi = 0;
-var radius = 1;
-
 var FOV = 90;
 
 var eyeX = 0;
@@ -120,6 +114,39 @@ window.onload = function init() {
         eyeZ -= 0.5;
         render();
     };
+
+    window.onmousedown = function ( event ) {
+        mouseDown = true;
+    }
+
+    window.onmouseup = function ( event ) {
+        mouseDown = false;
+    }
+
+    var mouseDown = false;
+    var prevX = null;
+    var prevY = null;
+
+    window.onmousemove = function ( event ) {
+        if(mouseDown && (event.target.id === "gl-canvas")) {
+            if(prevX || prevY) {
+                if(prevX < event.pageX) {
+                    eyeX += 0.1;
+                } else if(prevX > event.pageX) {
+                    eyeX -= 0.1;
+                }
+
+                if(prevY < event.pageY) {
+                    eyeY += 0.1;
+                } else if(prevY> event.pageY) {
+                    eyeY -= 0.1;
+                }
+            }
+            prevX = event.pageX;
+            prevY = event.pageY;
+        }
+        render();
+    }
 
 
     window.onkeydown = function( event ) {
