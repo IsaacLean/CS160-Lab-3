@@ -34,7 +34,7 @@ var radius = 1;
 
 var FOV = 90;
 
-var eyeX = 1;
+var eyeX = 0;
 var eyeY = 0;
 var eyeZ = 0;
 
@@ -147,6 +147,7 @@ window.onload = function init() {
 
 function render() {
     projectionMatrix = perspective(FOV, 1.0, .001, 100.0);
+    view = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     buildAndDrawCheckeredFloor();
     gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -212,7 +213,7 @@ function buildAndDrawCheckeredFloor() {
                           0.0,  0.0,  1.0, -30.0,
                           0.0,  0.0,  0.0, 1.0 );
 
-    modelViewMatrix = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
+    modelViewMatrix = mult(view, modelViewMatrix);
 
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
@@ -294,7 +295,7 @@ function buildAndDrawTetra() {
     modelViewMatrix = mult(view, scale);
 
     //modelViewMatrix = lookAt(eye, at, up);
-    modelViewMatrix = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
+    //modelViewMatrix = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
 
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
