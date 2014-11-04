@@ -124,22 +124,31 @@ window.onload = function init() {
     }
 
     var mouseDown = false;
+    var shiftDown = false;
     var prevX = null;
     var prevY = null;
 
     window.onmousemove = function ( event ) {
         if(mouseDown && (event.target.id === "gl-canvas")) {
             if(prevX || prevY) {
-                if(prevX < event.pageX) {
-                    eyeX += 0.1;
-                } else if(prevX > event.pageX) {
-                    eyeX -= 0.1;
-                }
+                if(shiftDown === true) {
+                    if(prevY < event.pageY) {
+                        eyeZ += 0.5;
+                    } else if(prevY > event.pageY) {
+                        eyeZ -= 0.5;
+                    }
+                } else {
+                    if(prevX < event.pageX) {
+                        eyeX += 0.3;
+                    } else if(prevX > event.pageX) {
+                        eyeX -= 0.3;
+                    }
 
-                if(prevY < event.pageY) {
-                    eyeY += 0.1;
-                } else if(prevY> event.pageY) {
-                    eyeY -= 0.1;
+                    if(prevY < event.pageY) {
+                        eyeY += 0.1;
+                    } else if(prevY> event.pageY) {
+                        eyeY -= 0.1;
+                    }
                 }
             }
             prevX = event.pageX;
@@ -168,8 +177,18 @@ window.onload = function init() {
             transX += 0.1;
             break;
         }
+
+        if(event.keyCode === 16) {
+            shiftDown = true;
+        }
         render();
     };
+
+    window.onkeyup = function( event ) {
+        if(event.keyCode === 16) {
+            shiftDown = false;
+        }
+    }
 }
 
 function render() {
