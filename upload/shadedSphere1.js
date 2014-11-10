@@ -27,8 +27,9 @@ var va = vec4(0.0, 0.0, -1.0,1);
 var vb = vec4(0.0, 0.942809, 0.333333, 1);
 var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
 var vd = vec4(0.816497, -0.471405, 0.333333,1);
-    
-var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+
+var lightPosVal = 1;
+var lightPosition = vec4(lightPosVal, lightPosVal, lightPosVal, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -50,6 +51,10 @@ var up = vec3(0.0, 1.0, 0.0);
 var program;
 
 var view = mat4(1.0);
+
+var transX = 0;
+var transY = 0.1;
+var transZ = -1;
     
 function triangle(a, b, c) {
 
@@ -119,6 +124,14 @@ function buildAndDrawSphere() {
     
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
+
+    var translate = mat4( 1.0,  0.0,  0.0, transX,
+                          0.0,  1.0,  0.0, transY,
+                          0.0,  0.0,  1.0, transZ,
+                          0.0,  0.0,  0.0, 1.0 );
+
+    temp = mult(translate, modelViewMatrix);
+    modelViewMatrix = temp;
 }
 
 function buildAndDrawCheckeredFloor() {
@@ -233,6 +246,16 @@ window.onload = function init() {
         normalsArray = [];
         init();
     };
+
+    document.getElementById("btn_shading").onclick = function(){
+        if(lightPosVal)
+            lightPosVal = 0;
+        else
+            lightPosVal = 1;
+        init();
+    };
+
+    lightPosition = vec4(lightPosVal, lightPosVal, lightPosVal, 0.0 );
 
     render();
 }
