@@ -57,6 +57,8 @@ var view = mat4(1.0);
 var transX = 0;
 var transY = 0.1;
 var transZ = -1;
+
+var FOV = 100;
     
 function triangle(a, b, c) {
 
@@ -227,6 +229,13 @@ window.onload = function init() {
     document.getElementById("Button3").onclick = function(){theta -= dr;};
     document.getElementById("Button4").onclick = function(){phi += dr;};
     document.getElementById("Button5").onclick = function(){phi -= dr;};
+
+    document.getElementById("btn_fovMinus").onclick = function(){
+        FOV -= 1;
+    };
+    document.getElementById("btn_fovPlus").onclick = function(){
+        FOV += 1;
+    };
     
     document.getElementById("btn_shading").onclick = function(){
         if(lightBuffer[0] === null) {
@@ -338,7 +347,8 @@ function render() {
                           0.0,  0.0,  0.0, 1.0 );
 
     modelViewMatrix = mult(translate, modelViewMatrix);
-    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    //projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    projectionMatrix = perspective(FOV, 1.0, .001, 100.0);
             
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
