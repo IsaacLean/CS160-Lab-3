@@ -230,23 +230,19 @@ window.onload = function init() {
     
     document.getElementById("btn_shading").onclick = function(){
         if(lightBuffer[0] === null) {
-            console.log(lightBuffer);
             lightBuffer[0] = lightPosX;
             lightBuffer[1] = lightPosY;
             lightBuffer[2] = lightPosZ;
             lightPosX = 0;
             lightPosY = 0;
             lightPosZ = 0;
-            console.log(lightBuffer);
         } else {
-            console.log(lightBuffer);
             lightPosX = lightBuffer[0];
             lightPosY = lightBuffer[1];
             lightPosZ = lightBuffer[2];
             lightBuffer[0] = null;
             lightBuffer[1] = null;
             lightBuffer[2] = null;
-            console.log(lightBuffer);
         }
         init();
     };
@@ -276,19 +272,19 @@ window.onkeydown = function( event ) {
             break;
 
         case 'I':
-            lightPosY += 0.1;
+            lightPosY += 0.5;
             break;
 
         case 'K':
-            lightPosY -= 0.1;
+            lightPosY -= 0.5;
             break;
 
         case 'J':
-            lightPosX -= 0.1;
+            lightPosX -= 0.5;
             break;
 
         case 'L':
-            lightPosX += 0.1;
+            lightPosX += 0.5;
             break;
     }
 
