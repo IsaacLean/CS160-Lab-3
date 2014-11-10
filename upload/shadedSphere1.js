@@ -252,15 +252,27 @@ window.onload = function init() {
     render();
 }
 
+var shiftDown = false;
+
 window.onkeydown = function( event ) {
     var key = String.fromCharCode(event.keyCode);
     switch( key ) {
         case 'W':
-            transY += 0.1;
+            if(shiftDown) {
+                transZ -= 0.5;
+                console.log('trans -z called');
+            } else {
+                transY += 0.1;
+            }
             break;
 
         case 'S':
-            transY -= 0.1;
+            if(shiftDown) {
+                transZ += 0.5;
+                console.log('trans +z called');
+            } else {
+                transY -= 0.1;
+            }
             break;
 
         case 'A':
@@ -272,11 +284,21 @@ window.onkeydown = function( event ) {
             break;
 
         case 'I':
-            lightPosY += 0.5;
+            if(shiftDown) {
+                lightPosZ -= 0.5;
+                console.log('light -z called');
+            } else {
+                lightPosY += 0.5;
+            }
             break;
 
         case 'K':
-            lightPosY -= 0.5;
+            if(shiftDown) {
+                lightPosZ += 0.5;
+                console.log('light +z called');
+            } else {
+                lightPosY -= 0.5;
+            }
             break;
 
         case 'J':
@@ -287,9 +309,17 @@ window.onkeydown = function( event ) {
             lightPosX += 0.5;
             break;
     }
-
+    if(event.keyCode === 16) {
+        shiftDown = true;
+    }
     render();
 };
+
+window.onkeyup = function( event ) {
+    if(event.keyCode === 16) {
+        shiftDown = false;
+    }
+}
 
 function render() {
     lightPosition = vec4(lightPosX, lightPosY, lightPosZ, 0.0 );
