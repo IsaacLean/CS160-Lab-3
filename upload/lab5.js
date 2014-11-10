@@ -232,6 +232,25 @@ window.onload = function init() {
     document.getElementById("btn_fovPlus").onclick = function(){
         FOV += 1;
     };
+
+    document.getElementById("btn_eyeXPlus").onclick = function(){
+        eyeX += 1;
+    };
+    document.getElementById("btn_eyeXMinus").onclick = function(){
+        eyeX -= 1;
+    };
+    document.getElementById("btn_eyeYPlus").onclick = function(){
+        eyeY += 1;
+    };
+    document.getElementById("btn_eyeYMinus").onclick = function(){
+        eyeY -= 1;
+    };
+    document.getElementById("btn_eyeZPlus").onclick = function(){
+        eyeZ += 1;
+    };
+    document.getElementById("btn_eyeZMinus").onclick = function(){
+        eyeZ -= 1;
+    };
     
     document.getElementById("btn_shading").onclick = function(){
         if(lightBuffer[0] === null) {
@@ -326,6 +345,10 @@ window.onkeyup = function( event ) {
     }
 }
 
+var eyeX = 0;
+var eyeY = 0;
+var eyeZ = -1;
+
 function render() {
     lightPosition = vec4(lightPosX, lightPosY, lightPosZ, 0.0 );
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -336,7 +359,7 @@ function render() {
     eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
         radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
 
-    modelViewMatrix = lookAt(eye, at , up);
+    modelViewMatrix = lookAt([eyeX, eyeY, eyeZ], at , up);
     var translate = mat4( 1.0,  0.0,  0.0, transX,
                           0.0,  1.0,  0.0, transY,
                           0.0,  0.0,  1.0, transZ,
