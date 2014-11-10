@@ -122,7 +122,10 @@ function buildAndDrawSphere() {
 }
 
 function buildAndDrawCheckeredFloor() {
-    projectionMatrix = ortho(left, right, bottom, ytop, near, far); //!!!
+    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
     var colors = [];
     var points = [];
 
@@ -145,13 +148,13 @@ function buildAndDrawCheckeredFloor() {
                 colors.push(vec3(0.0, 0.0, 0.0));
                 colors.push(vec3(0.0, 0.0, 0.0));
             }
-            points.push(vec3(x, 0.0, z));
-            points.push(vec3(x, 0.0, z - 5.0));
-            points.push(vec3(x - 5.0, 0.0, z - 5.0));
+            points.push(vec4(x, 0.0, z, 0));
+            points.push(vec4(x, 0.0, z - 5.0, 0));
+            points.push(vec4(x - 5.0, 0.0, z - 5.0, 0));
 
-            points.push(vec3(x, 0.0, z));
-            points.push(vec3(x - 5.0, 0.0, z - 5.0));
-            points.push(vec3(x - 5.0, 0.0, z));
+            points.push(vec4(x, 0.0, z, 0));
+            points.push(vec4(x - 5.0, 0.0, z - 5.0, 0));
+            points.push(vec4(x - 5.0, 0.0, z, 0));
             ++i;
         }
         ++i;
@@ -184,7 +187,6 @@ function buildAndDrawCheckeredFloor() {
     modelViewMatrix = mult(view, modelViewMatrix);
 
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
-    console.log(projectionMatrix);
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
 
     gl.drawArrays( gl.TRIANGLES, 0, points.length );
@@ -232,27 +234,15 @@ window.onload = function init() {
         init();
     };
 
-    buildAndDrawCheckeredFloor();
-    buildAndDrawSphere();
-
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "ambientProduct"),flatten(ambientProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "diffuseProduct"),flatten(diffuseProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "specularProduct"),flatten(specularProduct) );	
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "lightPosition"),flatten(lightPosition) );
-    gl.uniform1f( gl.getUniformLocation(program, 
-       "shininess"),materialShininess );
-
     render();
 }
 
 
 function render() {
-    
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    buildAndDrawCheckeredFloor();
+    gl.clear(gl.DEPTH_BUFFER_BIT);
+    buildAndDrawSphere();
     
     eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
         radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
@@ -266,7 +256,18 @@ function render() {
     for( var i=0; i<index; i+=3) 
         gl.drawArrays( gl.TRIANGLES, i, 3 );
 
+    
 
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "ambientProduct"),flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "diffuseProduct"),flatten(diffuseProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "specularProduct"),flatten(specularProduct) );   
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightPosition"),flatten(lightPosition) );
+    gl.uniform1f( gl.getUniformLocation(program, 
+       "shininess"),materialShininess );
 
     window.requestAnimFrame(render);
 }
