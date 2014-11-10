@@ -28,8 +28,10 @@ var vb = vec4(0.0, 0.942809, 0.333333, 1);
 var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
 var vd = vec4(0.816497, -0.471405, 0.333333,1);
 
-var lightPosVal = 1;
-var lightPosition = vec4(lightPosVal, lightPosVal, lightPosVal, 0.0 );
+var lightPosX = 1;
+var lightPosY = 1;
+var lightPosZ = 1;
+var lightPosition = vec4(1, 1, 1, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -197,6 +199,8 @@ function buildAndDrawCheckeredFloor() {
     gl.drawArrays( gl.TRIANGLES, 0, points.length );
 }
 
+var lightBuffer = [null, null, null];
+
 window.onload = function init() {
 
     canvas = document.getElementById( "gl-canvas" );
@@ -223,16 +227,31 @@ window.onload = function init() {
     document.getElementById("Button3").onclick = function(){theta -= dr;};
     document.getElementById("Button4").onclick = function(){phi += dr;};
     document.getElementById("Button5").onclick = function(){phi -= dr;};
-
+    
     document.getElementById("btn_shading").onclick = function(){
-        if(lightPosVal)
-            lightPosVal = 0;
-        else
-            lightPosVal = 1;
+        if(lightBuffer[0] === null) {
+            console.log(lightBuffer);
+            lightBuffer[0] = lightPosX;
+            lightBuffer[1] = lightPosY;
+            lightBuffer[2] = lightPosZ;
+            lightPosX = 0;
+            lightPosY = 0;
+            lightPosZ = 0;
+            console.log(lightBuffer);
+        } else {
+            console.log(lightBuffer);
+            lightPosX = lightBuffer[0];
+            lightPosY = lightBuffer[1];
+            lightPosZ = lightBuffer[2];
+            lightBuffer[0] = null;
+            lightBuffer[1] = null;
+            lightBuffer[2] = null;
+            console.log(lightBuffer);
+        }
         init();
     };
 
-    lightPosition = vec4(lightPosVal, lightPosVal, lightPosVal, 0.0 );
+    lightPosition = vec4(lightPosX, lightPosY, lightPosZ, 0.0 );
 
     render();
 }
@@ -255,12 +274,29 @@ window.onkeydown = function( event ) {
         case 'D':
             transX += 0.1;
             break;
+
+        case 'I':
+            lightPosY += 0.1;
+            break;
+
+        case 'K':
+            lightPosY -= 0.1;
+            break;
+
+        case 'J':
+            lightPosX -= 0.1;
+            break;
+
+        case 'L':
+            lightPosX += 0.1;
+            break;
     }
 
     render();
 };
 
 function render() {
+    lightPosition = vec4(lightPosX, lightPosY, lightPosZ, 0.0 );
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     buildAndDrawCheckeredFloor();
     gl.clear(gl.DEPTH_BUFFER_BIT);
