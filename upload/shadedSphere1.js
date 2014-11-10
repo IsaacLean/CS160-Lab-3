@@ -124,14 +124,6 @@ function buildAndDrawSphere() {
     
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
-
-    var translate = mat4( 1.0,  0.0,  0.0, transX,
-                          0.0,  1.0,  0.0, transY,
-                          0.0,  0.0,  1.0, transZ,
-                          0.0,  0.0,  0.0, 1.0 );
-
-    temp = mult(translate, modelViewMatrix);
-    modelViewMatrix = temp;
 }
 
 function buildAndDrawCheckeredFloor() {
@@ -231,21 +223,6 @@ window.onload = function init() {
     document.getElementById("Button3").onclick = function(){theta -= dr;};
     document.getElementById("Button4").onclick = function(){phi += dr;};
     document.getElementById("Button5").onclick = function(){phi -= dr;};
-    
-    document.getElementById("Button6").onclick = function(){
-        numTimesToSubdivide++; 
-        index = 0;
-        pointsArray = [];
-        normalsArray = []; 
-        init();
-    };
-    document.getElementById("Button7").onclick = function(){
-        if(numTimesToSubdivide) numTimesToSubdivide--;
-        index = 0;
-        pointsArray = []; 
-        normalsArray = [];
-        init();
-    };
 
     document.getElementById("btn_shading").onclick = function(){
         if(lightPosVal)
@@ -260,6 +237,28 @@ window.onload = function init() {
     render();
 }
 
+window.onkeydown = function( event ) {
+    var key = String.fromCharCode(event.keyCode);
+    switch( key ) {
+        case 'W':
+            transY += 0.1;
+            break;
+
+        case 'S':
+            transY -= 0.1;
+            break;
+
+        case 'A':
+            transX -= 0.1;
+            break;
+
+        case 'D':
+            transX += 0.1;
+            break;
+    }
+
+    render();
+};
 
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -271,6 +270,12 @@ function render() {
         radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
 
     modelViewMatrix = lookAt(eye, at , up);
+    var translate = mat4( 1.0,  0.0,  0.0, transX,
+                          0.0,  1.0,  0.0, transY,
+                          0.0,  0.0,  1.0, transZ,
+                          0.0,  0.0,  0.0, 1.0 );
+
+    modelViewMatrix = mult(translate, modelViewMatrix);
     projectionMatrix = ortho(left, right, bottom, ytop, near, far);
             
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
