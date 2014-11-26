@@ -14,6 +14,16 @@ var transX = 0;
 var transY = 0;
 var transZ = 0;
 
+var lightPosition = vec4(1, 1, 1, 0.0 );
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialShininess = 100.0;
+
 function scale( x, y, z )
 {
     var result = mat4();
@@ -91,7 +101,7 @@ window.onload = function init()
     // INVALID_VALUE: vertexAttribPointer: index out of range 
     // INVALID_VALUE: enableVertexAttribArray: index out of range 
     var aNormal = gl.getAttribLocation( program, "aNormal" );
-    gl.vertexAttribPointer( aNormal, 3, gl.FLOAT, false, Vertex.size, Vertex.offsetNormal );
+    gl.vertexAttribPointer( aNormal, 4, gl.FLOAT, false, Vertex.size, Vertex.offsetNormal );
     gl.enableVertexAttribArray( aNormal );
 
     var aTextureCoord = gl.getAttribLocation( program, "aTextureCoord" );
@@ -250,6 +260,9 @@ function GeneratePlane(indices, vertices)
 
 function GenerateSphere(indices, vertices)
 {
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
 
     var SPHERE_DIV = 25;
 
@@ -302,6 +315,8 @@ function GenerateSphere(indices, vertices)
 Render.time = 0;
 function Render(texture0, texture1)
 {
+    lightPosition = vec4(1, 1, 1, 0.0 );
+
     Render.time += .16;
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -334,4 +349,15 @@ function Render(texture0, texture1)
     //Draw the indices of the sphere offset = 6 indices in the plane * sizeof(UNSIGNED_SHORT)
     gl.drawElements(gl.TRIANGLES, indices.length-6, gl.UNSIGNED_SHORT, 6 * Uint16Array.BYTES_PER_ELEMENT);
     //END SPHERE
+
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "ambientProduct"),flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "diffuseProduct"),flatten(diffuseProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "specularProduct"),flatten(specularProduct) );   
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightPosition"),flatten(lightPosition) );
+    gl.uniform1f( gl.getUniformLocation(program, 
+       "shininess"),materialShininess );
 }

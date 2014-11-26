@@ -7,7 +7,7 @@
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 aPosition;
-attribute vec3 aNormal;
+attribute vec4 aNormal;
 attribute vec2 aTextureCoord;
 
 uniform mat4 modelView;
@@ -17,11 +17,48 @@ varying vec2 vTextureCoord;
 
 precision mediump float;
 
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+uniform vec4 lightPosition;
+uniform float shininess;
+
+varying vec4 fColor;
+
 void
 main()
 {
 	vTextureCoord = aTextureCoord;
 	gl_Position = projection * modelView * aPosition;
+
+	vec3 pos = -(modelView * aPosition).xyz;
+	vec3 light = lightPosition.xyz;
+    vec3 L = normalize( light - pos );
+
+    vec3 E = normalize( -pos );
+    vec3 H = normalize( L + E );
+
+    // Transform vertex normal into eye coordinates
+        
+     
+    vec3 N = normalize( (modelView*aNormal).xyz);
+
+    // Compute terms in the illumination equation
+    vec4 ambient = ambientProduct;
+
+    float Kd = max( dot(L, N), 0.0 );
+    vec4  diffuse = Kd*diffuseProduct;
+
+    float Ks = pow( max(dot(N, H), 0.0), shininess );
+    vec4  specular = Ks * specularProduct;
+        
+    if( dot(L, N) < 0.0 ) {
+    	specular = vec4(0.0, 0.0, 0.0, 1.0);
+    } 
+
+    gl_Position = projection * modelView * aPosition;
+        
+    fColor = ambient + diffuse +specular;
+
+    fColor.a = 1.0;
 }
 </script>
 
@@ -31,11 +68,12 @@ precision mediump float;
 uniform sampler2D textureUnit0;
 
 varying vec2 vTextureCoord;
+varying vec4 fColor;
 
 void
 main()
 {
-    gl_FragColor = texture2D(textureUnit0, vTextureCoord);
+    gl_FragColor = fColor * texture2D(textureUnit0, vTextureCoord);
 }
 </script>
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
