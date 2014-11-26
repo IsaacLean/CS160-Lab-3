@@ -6,6 +6,14 @@ var gl;
 var vertices = [];
 var indices = [];
 
+var cameraX = 1;
+var cameraY = 0.5;
+var cameraZ = 0;
+
+var transX = 0;
+var transY = 0;
+var transZ = 0;
+
 function scale( x, y, z )
 {
     var result = mat4();
@@ -175,6 +183,45 @@ window.onload = function init()
 	document.getElementById("btn_nullTexture").onclick = function(){
         texture0 = null;
     };
+
+    window.onkeydown = function(evt) {
+        var key = String.fromCharCode(evt.keyCode);
+        switch(key) {
+            case 'U':
+                cameraX += 1;
+                break;
+            case 'J':
+                cameraX -= 1;
+                break;
+            case 'I':
+                cameraY += 1;
+                break;
+            case 'K':
+                cameraY -= 1;
+                break;
+            case 'O':
+                cameraZ += 1;
+                break;
+            case 'L':
+                cameraZ -= 1;
+                break;
+            case 'W':
+                transX -= 0.5;
+                break;
+            case 'A':
+                transZ += 0.5;
+                break;
+            case 'S':
+                transX += 0.5;
+                break;
+            case 'D':
+                transZ -= 0.5;
+                break;
+        }
+        if(event.keyCode === 16) {
+            shiftDown = true;
+        }
+    };
 };
 
 function CreateTexture(file, loaded) 
@@ -261,7 +308,7 @@ function Render(texture0, texture1)
 
     //View and projection are the same for both objects
     var projection = perspective(90, 1.0, 0.01, 50.0);
-    var view = lookAt(vec3(1, .5, 0), vec3(0, 0, 0), vec3(0, 1, 0));
+    var view = lookAt(vec3(cameraX, cameraY, cameraZ), vec3(0, 0, 0), vec3(0, 1, 0));
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projection" ), false, flatten(projection));
 
 
@@ -280,7 +327,7 @@ function Render(texture0, texture1)
     //SPHERE
     gl.bindTexture(gl.TEXTURE_2D, texture0); //assuming activeTexture = TEXTURE0
 
-    var model = mult(mult(translate(0, 0, 0), scale(.5, .5, .5)), rotate(Render.time*10, vec3(0, 1, 0)));
+    var model = mult(mult(translate(transX, transY, transZ), scale(.5, .5, .5)), rotate(Render.time*10, vec3(0, 1, 0)));
     var modelView = mult(view, model);
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "modelView" ), false, flatten(modelView));
 
@@ -288,4 +335,3 @@ function Render(texture0, texture1)
     gl.drawElements(gl.TRIANGLES, indices.length-6, gl.UNSIGNED_SHORT, 6 * Uint16Array.BYTES_PER_ELEMENT);
     //END SPHERE
 }
-
